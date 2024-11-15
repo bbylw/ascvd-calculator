@@ -39,29 +39,36 @@ const translations = {
             followup: "每3-6个月复查一次",
             lowRisk: {
                 lifestyle: "保持健康的生活方式",
-                diet: "遵循健康饮食模式（如地中海饮食）",
+                diet: "遵循健康饮食模式（如地中海饮食或DASH饮食）",
                 exercise: "每周进行150分钟中等强度或75分钟高强度有氧运动",
                 checkup: "建议每3-5年进行一次心血管风险评估",
                 weight: "维持健康体重（BMI <25 kg/m²）",
-                smoking: "如有吸烟，建议戒烟并寻求戒烟帮助"
+                smoking: "如有吸烟，建议戒烟并寻求戒烟帮助",
+                bp_treated: "已在服用降压药：\n- 血压控制目标<130/80 mmHg\n- 坚持服药并定期监测血压",
+                bp_untreated: "有高血压但未服药：\n- 建议就医评估是否需要药物治疗\n- 血压控制目标<130/80 mmHg",
+                diabetes: "如有糖尿病：\n- 血糖控制目标 HbA1c<7%\n- 定期监测血糖",
+                lipids: "血脂管理建议：\n- LDL-C <3.4 mmol/L (130 mg/dL)\n- 定期监测血脂水平"
             },
             moderateRisk: {
                 lifestyle: "加强生活方式干预",
                 statin: "根据个人情况考虑他汀类药物治疗",
-                bp: "血压控制目标<130/80 mmHg",
+                bp_treated: "已在服用降压药：\n- 血压严格控制至<130/80 mmHg\n- 定期随访并调整用药",
+                bp_untreated: "有高血压但未服药：\n- 建议及时就医开始降压治疗\n- 血压控制目标<130/80 mmHg",
                 monitor: "每年进行血压和血脂监测",
-                diabetes: "如有糖尿病，建议HbA1c控制目标<7%",
-                followup: "建议每年进行心血管风险评估"
+                diabetes: "如有糖尿病：\n- HbA1c控制目标<7%\n- 考虑SGLT2抑制剂或GLP-1受体激动剂",
+                followup: "建议每年进行心血管风险评估",
+                lipids: "血脂管理建议：\n- LDL-C <2.6 mmol/L (100 mg/dL)\n- 考虑他汀类药物治疗"
             },
             highRisk: {
                 doctor: "建议就医进行专业评估和治疗",
                 statin: "推荐使用中等或高强度他汀类药物",
-                bp: "严格控制血压至<130/80 mmHg",
-                diabetes: "如有糖尿病：\n- HbA1c控制目标<7%\n- 考虑SGLT2抑制剂或GLP-1受体激动剂",
+                bp_treated: "已在服用降压药：\n- 血压严格控制至<130/80 mmHg\n- 可能需要联合用药\n- 每月监测血压",
+                bp_untreated: "有高血压但未服药：\n- 建议立即就医开始降压治疗\n- 血压控制目标<130/80 mmHg",
+                diabetes: "如有糖尿病：\n- HbA1c控制目标<7%\n- 优先考虑SGLT2抑制剂或GLP-1受体激动剂\n- 严格监测血糖",
                 antiplatelet: "根据具体情况考虑抗血小板治疗",
                 lifestyle: "强化生活方式干预：\n- 限制钠摄入（<2300mg/日）\n- DASH饮食模式\n- 规律运动\n- 戒烟限酒",
                 followup: "每3-6个月随访一次",
-                monitor: "定期监测：\n- 血压\n- 血脂\n- 空腹血糖\n- 肾功能"
+                monitor: "定期监测：\n- 血压\n- 血脂（LDL-C控制目标<1.8 mmol/L或70 mg/dL）\n- 空腹血糖\n- 肾功能"
             }
         },
         units: {

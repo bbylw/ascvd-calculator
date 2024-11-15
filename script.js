@@ -162,7 +162,7 @@ function handleFormSubmit(e) {
     }
 
     const risk = calculateRisk(data);
-    displayResult(risk);
+    displayResult(risk, data);
 }
 
 // 初始化函数
@@ -365,28 +365,49 @@ function calculateRisk(data) {
 }
 
 // 更新风险等级的阈值和建议
-function getRiskAdvice(risk) {
-    const t = translations[currentLang];
+function getRiskAdvice(risk, data) {
+    const t = translations.zh;
+    let adviceList = [];
+    let riskLevel = '';
+    
+    // 确定风险等级和基础建议
     if (risk < 5) {
-        return {
-            level: t.lowRisk,
-            advice: Object.values(t.advice.lowRisk)
-        };
+        riskLevel = t.lowRisk;
+        adviceList = Object.values(t.advice.lowRisk);
     } else if (risk < 7.5) {
-        return {
-            level: t.moderateRisk,
-            advice: Object.values(t.advice.moderateRisk)
-        };
+        riskLevel = t.moderateRisk;
+        adviceList = Object.values(t.advice.moderateRisk);
     } else {
-        return {
-            level: t.highRisk,
-            advice: Object.values(t.advice.highRisk)
-        };
+        riskLevel = t.highRisk;
+        adviceList = Object.values(t.advice.highRisk);
     }
+
+    // 根据患者具体情况筛选建议
+    let finalAdvice = adviceList.filter(advice => {
+        // 如果是高血压相关建议，根据是否服用降压药选择合适的建议
+        if (advice.includes('血压') || advice.includes('降压')) {
+            return data.bpTreat ? advice.includes('已在服用') : advice.includes('未服药');
+        }
+        // 如果是糖尿病相关建议，只在患者有糖尿病时显示
+        if (advice.includes('糖尿病')) {
+            return data.diabetes;
+        }
+        // 如果是吸烟相关建议，只在患者吸烟时显示
+        if (advice.includes('吸烟') || advice.includes('戒烟')) {
+            return data.smoker;
+        }
+        // 其他一般性建议都显示
+        return true;
+    });
+
+    return {
+        level: riskLevel,
+        advice: finalAdvice
+    };
 }
 
-// 修改 displayResult 函数以更好地显示建议
-function displayResult(risk) {
+// 修改 displayResult 函数，传入患者数据
+function displayResult(risk, data) {
     const resultDiv = document.getElementById('result');
     const riskScore = document.getElementById('riskScore');
     const riskLevel = document.getElementById('riskLevel');
@@ -394,12 +415,11 @@ function displayResult(risk) {
     resultDiv.classList.remove('hidden');
     riskScore.textContent = risk.toFixed(1);
     
-    const riskAdvice = getRiskAdvice(risk);
+    const riskAdvice = getRiskAdvice(risk, data);
     
     let adviceHtml = `<div class="${riskAdvice.level.toLowerCase().replace(/\s+/g, '-')}-risk">`;
     adviceHtml += `<h3>${riskAdvice.level}</h3><ul>`;
     riskAdvice.advice.forEach(item => {
-        // 处理可能包含换行符的建议
         const adviceItems = item.split('\n');
         adviceItems.forEach(adviceItem => {
             if (adviceItem.trim()) {
