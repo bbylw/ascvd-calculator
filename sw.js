@@ -1,11 +1,11 @@
 const CACHE_NAME = 'pce-calculator-v1';
 const urlsToCache = [
-    '/',
-    '/index.html',
-    '/style.css',
-    '/script.js',
-    '/lang.js',
-    '/manifest.json'
+    './',
+    './index.html',
+    './style.css',
+    './script.js',
+    './lang.js',
+    './manifest.json'
 ];
 
 self.addEventListener('install', event => {

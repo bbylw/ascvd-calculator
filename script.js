@@ -1,11 +1,4 @@
-let currentLang = 'zh';
-
-function switchLanguage(lang) {
-    currentLang = lang;
-    document.getElementById('zh-btn').classList.toggle('active', lang === 'zh');
-    document.getElementById('en-btn').classList.toggle('active', lang === 'en');
-    updatePageContent();
-}
+const currentLang = 'zh';
 
 function updatePageContent() {
     const t = translations[currentLang];

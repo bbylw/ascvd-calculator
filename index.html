@@ -4,25 +4,13 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>PCE计算器 - ASCVD风险评估</title>
-    <link rel="stylesheet" href="style.css" />
-    <link rel="manifest" href="/manifest.json" />
+    <link rel="stylesheet" href="./style.css" />
+    <link rel="manifest" href="./manifest.json" />
     <meta name="theme-color" content="#2c3e50" />
-    <script src="lang.js"></script>
+    <script src="./lang.js"></script>
   </head>
   <body>
     <div class="container">
-      <div class="language-switch">
-        <button
-          onclick="switchLanguage('zh')"
-          class="lang-btn active"
-          id="zh-btn"
-        >
-          中文
-        </button>
-        <button onclick="switchLanguage('en')" class="lang-btn" id="en-btn">
-          English
-        </button>
-      </div>
       <h1>10年ASCVD风险评估计算器</h1>
       <form id="pceForm">
         <div class="form-group">
@@ -77,12 +65,15 @@
         </div>
 
         <div class="form-group">
-          <label for="systolic">收缩压 (mmHg):</label>
+          <label for="systolic">当前收缩压 (mmHg):</label>
           <input type="number" id="systolic" required />
+          <small class="unit-hint"
+            >请填写当前的收缩压数值，无论是否在服用降压药</small
+          >
         </div>
 
         <div class="form-group">
-          <label>高血压治疗:</label>
+          <label>是否正在服用降压药:</label>
           <input type="radio" id="bpTreatYes" name="bpTreat" value="yes" />
           <label for="bpTreatYes">是</label>
           <input
@@ -93,6 +84,7 @@
             checked
           />
           <label for="bpTreatNo">否</label>
+          <small class="unit-hint">如果目前正在服用降压药物，请选择"是"</small>
         </div>
 
         <div class="form-group">
@@ -126,7 +118,7 @@
         <div id="riskLevel"></div>
       </div>
     </div>
-    <script src="script.js"></script>
+    <script src="./script.js"></script>
     <script>
       if ("serviceWorker" in navigator) {
         window.addEventListener("load", () => {

@@ -101,24 +101,9 @@ button:hover {
     color: #721c24;
 }
 
-.language-switch {
-    text-align: right;
-    margin-bottom: 1rem;
-}
-
+.language-switch,
 .lang-btn {
-    padding: 0.5rem 1rem;
-    margin-left: 0.5rem;
-    border: 1px solid #2c3e50;
-    background: transparent;
-    color: #2c3e50;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-.lang-btn.active {
-    background: #2c3e50;
-    color: white;
+    display: none;
 }
 
 .input-unit-group {
