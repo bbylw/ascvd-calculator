@@ -234,87 +234,84 @@ function validateInput(data) {
 
 // 更新计算风险的函数
 function calculateRisk(data) {
-    // 2019 ACC/AHA 指南更新的系数
+    // 2019 ACC/AHA Guideline 更新的系数
     const coefficients = {
         female: {
-            ln_age: 2.32888,
-            ln_age_squared: 0,
-            ln_total_chol: 1.20904,
-            ln_age_total_chol: 0,
-            ln_hdl: -0.70833,
-            ln_age_hdl: 0,
-            ln_treated_sbp: 2.82263,
-            ln_untreated_sbp: 2.76157,
-            ln_age_treated_sbp: 0,
-            ln_age_untreated_sbp: 0,
-            current_smoker: 0.52873,
-            diabetes: 0.69154,
-            baseline_survival: 0.9665,
-            mean_terms: 0
+            // 女性系数
+            ln_age: 17.114,            
+            ln_total_chol: 0.940,
+            ln_hdl: -18.920,
+            ln_treated_sbp: 29.291,
+            ln_untreated_sbp: 27.820,
+            ln_age_hdl: 4.475,
+            ln_age_sbp_treated: -6.432,
+            ln_age_sbp_untreated: -6.087,
+            smoker: 7.574,
+            ln_age_smoker: -1.665,
+            diabetes: 0.661,
+            mean_age: 3.8686,
+            mean_total_chol: 5.3704,
+            mean_hdl: 3.8284,
+            mean_sbp_treated: 4.7835,
+            mean_sbp_untreated: 4.7835,
+            baseline_survival: 0.9665
         },
         male: {
-            ln_age: 2.16975,
-            ln_age_squared: 0,
-            ln_total_chol: 0.65945,
-            ln_age_total_chol: 0,
-            ln_hdl: -0.57367,
-            ln_age_hdl: 0,
-            ln_treated_sbp: 1.99881,
-            ln_untreated_sbp: 1.93303,
-            ln_age_treated_sbp: 0,
-            ln_age_untreated_sbp: 0,
-            current_smoker: 0.65451,
-            diabetes: 0.57367,
-            baseline_survival: 0.9144,
-            mean_terms: 0
+            // 男性系数
+            ln_age: 12.344,
+            ln_total_chol: 11.853,
+            ln_hdl: -7.990,
+            ln_treated_sbp: 1.797,
+            ln_untreated_sbp: 1.764,
+            ln_age_hdl: 1.769,
+            ln_age_sbp_treated: -0.353,
+            ln_age_sbp_untreated: -0.345,
+            smoker: 7.837,
+            ln_age_smoker: -1.795,
+            diabetes: 0.658,
+            mean_age: 3.8686,
+            mean_total_chol: 5.3704,
+            mean_hdl: 3.8284,
+            mean_sbp_treated: 4.7835,
+            mean_sbp_untreated: 4.7835,
+            baseline_survival: 0.9144
         }
     };
 
     const coef = coefficients[data.sex];
     
-    // 计算自然对数值
-    const lnAge = Math.log(data.age);
-    const lnTotalChol = Math.log(data.totalChol);
-    const lnHdl = Math.log(data.hdl);
-    const lnSbp = Math.log(data.systolic);
+    // 计算中心化的自然对数值
+    const lnAge = Math.log(data.age) - coef.mean_age;
+    const lnTotalChol = Math.log(data.totalChol) - coef.mean_total_chol;
+    const lnHdl = Math.log(data.hdl) - coef.mean_hdl;
+    const lnSbp = Math.log(data.systolic) - (data.bpTreat ? 
+        coef.mean_sbp_treated : coef.mean_sbp_untreated);
 
     // 计算个人得分
     let sum = 0;
 
-    // 1. 年龄相关项
+    // 1. 年龄项
     sum += coef.ln_age * lnAge;
-    if (coef.ln_age_squared) {
-        sum += coef.ln_age_squared * Math.pow(lnAge, 2);
-    }
 
     // 2. 总胆固醇项
     sum += coef.ln_total_chol * lnTotalChol;
-    if (coef.ln_age_total_chol) {
-        sum += coef.ln_age_total_chol * lnAge * lnTotalChol;
-    }
 
     // 3. HDL胆固醇项
     sum += coef.ln_hdl * lnHdl;
-    if (coef.ln_age_hdl) {
-        sum += coef.ln_age_hdl * lnAge * lnHdl;
-    }
+    sum += coef.ln_age_hdl * lnAge * lnHdl;
 
     // 4. 收缩压项
     if (data.bpTreat) {
         sum += coef.ln_treated_sbp * lnSbp;
-        if (coef.ln_age_treated_sbp) {
-            sum += coef.ln_age_treated_sbp * lnAge * lnSbp;
-        }
+        sum += coef.ln_age_sbp_treated * lnAge * lnSbp;
     } else {
         sum += coef.ln_untreated_sbp * lnSbp;
-        if (coef.ln_age_untreated_sbp) {
-            sum += coef.ln_age_untreated_sbp * lnAge * lnSbp;
-        }
+        sum += coef.ln_age_sbp_untreated * lnAge * lnSbp;
     }
 
     // 5. 吸烟项
     if (data.smoker) {
-        sum += coef.current_smoker;
+        sum += coef.smoker + (coef.ln_age_smoker * lnAge);
     }
 
     // 6. 糖尿病项
@@ -323,13 +320,12 @@ function calculateRisk(data) {
     }
 
     // 计算10年风险
-    const predictedRisk = 1 - Math.pow(coef.baseline_survival, Math.exp(sum - coef.mean_terms));
-    const risk = predictedRisk * 100;
+    const risk = (1 - Math.pow(coef.baseline_survival, Math.exp(sum))) * 100;
 
     // 种族调整
     let adjustedRisk = risk;
     if (data.race === 'asian') {
-        adjustedRisk *= 0.5;  // 亚裔风险调整（2019指南更新）
+        adjustedRisk *= 0.5;  // 亚裔风险调整
     } else if (data.race === 'aa') {
         adjustedRisk *= 1.3;  // 非裔美国人风险调整
     }
@@ -344,8 +340,13 @@ function calculateRisk(data) {
         smoker: data.smoker,
         diabetes: data.diabetes,
         race: data.race,
+        lnValues: {
+            lnAge,
+            lnTotalChol,
+            lnHdl,
+            lnSbp
+        },
         sum: sum,
-        predictedRisk: predictedRisk,
         baselineRisk: risk,
         adjustedRisk: adjustedRisk
     });
