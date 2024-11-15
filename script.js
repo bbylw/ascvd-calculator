@@ -383,7 +383,7 @@ function getRiskAdvice(risk) {
     }
 }
 
-// 更新显示结果的函数
+// 修改 displayResult 函数
 function displayResult(risk) {
     const resultDiv = document.getElementById('result');
     const riskScore = document.getElementById('riskScore');
@@ -394,12 +394,12 @@ function displayResult(risk) {
     
     const riskAdvice = getRiskAdvice(risk);
     
-    let adviceHtml = `<h3>${riskAdvice.level}</h3><ul>`;
+    let adviceHtml = `<div class="${riskAdvice.level.toLowerCase()}-risk">`;
+    adviceHtml += `<h3>${riskAdvice.level}</h3><ul>`;
     riskAdvice.advice.forEach(item => {
         adviceHtml += `<li>${item}</li>`;
     });
-    adviceHtml += '</ul>';
+    adviceHtml += '</ul></div>';
     
-    riskLevel.className = `${riskAdvice.level.toLowerCase()}-risk`;
     riskLevel.innerHTML = adviceHtml;
 } 
