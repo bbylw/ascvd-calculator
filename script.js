@@ -94,57 +94,64 @@ function updateRangeHint(fieldId) {
     hintElement.textContent = `${t.validRange}: ${minValue}-${maxValue} ${t.units[unit]}`;
 }
 
-// 在表单提交时转换为mg/dL进行计算
-document.getElementById('pceForm').addEventListener('submit', function(e) {
-    e.preventDefault();
+// 修改事件监听器的绑定方式
+document.addEventListener('DOMContentLoaded', function() {
+    // 初始化表单
+    initializeForm();
     
-    const t = translations[currentLang];
-    
-    // 获取输入值（保持原始单位）
-    const totalChol = parseFloat(document.getElementById('totalChol').value);
-    const hdl = parseFloat(document.getElementById('hdl').value);
-    
-    // 转换为mg/dL用于计算
-    const totalCholMgdl = currentValues.totalChol.unit === UNITS.MMOLL ? 
-        totalChol * CONVERSION.CHOL_MMOLL_TO_MGDL : 
-        totalChol;
-    
-    const hdlMgdl = currentValues.hdl.unit === UNITS.MMOLL ? 
-        hdl * CONVERSION.CHOL_MMOLL_TO_MGDL : 
-        hdl;
-    
-    const data = {
-        sex: document.getElementById('sex').value,
-        race: document.getElementById('race').value,
-        age: parseInt(document.getElementById('age').value),
-        totalChol: totalCholMgdl,  // 使用转换后的值
-        hdl: hdlMgdl,              // 使用转换后的值
-        systolic: parseInt(document.getElementById('systolic').value),
-        bpTreat: document.querySelector('input[name="bpTreat"]:checked').value === 'yes',
-        diabetes: document.querySelector('input[name="diabetes"]:checked').value === 'yes',
-        smoker: document.querySelector('input[name="smoker"]:checked').value === 'yes'
-    };
+    // 绑定表单提交事件
+    const form = document.getElementById('pceForm');
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const t = translations.zh;  // 直接使用中文翻译
+        
+        // 获取输入值（保持原始单位）
+        const totalChol = parseFloat(document.getElementById('totalChol').value);
+        const hdl = parseFloat(document.getElementById('hdl').value);
+        
+        // 转换为mg/dL用于计算
+        const totalCholMgdl = currentValues.totalChol.unit === UNITS.MMOLL ? 
+            totalChol * CONVERSION.CHOL_MMOLL_TO_MGDL : 
+            totalChol;
+        
+        const hdlMgdl = currentValues.hdl.unit === UNITS.MMOLL ? 
+            hdl * CONVERSION.CHOL_MMOLL_TO_MGDL : 
+            hdl;
+        
+        const data = {
+            sex: document.getElementById('sex').value,
+            race: document.getElementById('race').value,
+            age: parseInt(document.getElementById('age').value),
+            totalChol: totalCholMgdl,
+            hdl: hdlMgdl,
+            systolic: parseInt(document.getElementById('systolic').value),
+            bpTreat: document.querySelector('input[name="bpTreat"]:checked').value === 'yes',
+            diabetes: document.querySelector('input[name="diabetes"]:checked').value === 'yes',
+            smoker: document.querySelector('input[name="smoker"]:checked').value === 'yes'
+        };
 
-    // 使用原始单位进行验证
-    const validation = validateInput({
-        ...data,
-        totalChol: totalChol,  // 使用原始值进行验证
-        hdl: hdl               // 使用原始值进行验证
-    });
-    
-    if (validation.errors.length > 0) {
-        alert(t.errors.header + '\n\n' + validation.errors.join('\n'));
-        return;
-    }
-    
-    if (validation.warnings.length > 0) {
-        if (!confirm(t.warnings.header + '\n\n' + validation.warnings.join('\n') + '\n\n' + t.warnings.continue)) {
+        // 使用原始单位进行验证
+        const validation = validateInput({
+            ...data,
+            totalChol: totalChol,
+            hdl: hdl
+        });
+        
+        if (validation.errors.length > 0) {
+            alert(t.errors.header + '\n\n' + validation.errors.join('\n'));
             return;
         }
-    }
+        
+        if (validation.warnings.length > 0) {
+            if (!confirm(t.warnings.header + '\n\n' + validation.warnings.join('\n') + '\n\n' + t.warnings.continue)) {
+                return;
+            }
+        }
 
-    const risk = calculateRisk(data);
-    displayResult(risk);
+        const risk = calculateRisk(data);
+        displayResult(risk);
+    });
 });
 
 // 初始化函数
@@ -383,7 +390,7 @@ function getRiskAdvice(risk) {
     }
 }
 
-// 修改 displayResult 函数
+// 修改 displayResult 函数，确保正确显示结果
 function displayResult(risk) {
     const resultDiv = document.getElementById('result');
     const riskScore = document.getElementById('riskScore');
@@ -394,7 +401,7 @@ function displayResult(risk) {
     
     const riskAdvice = getRiskAdvice(risk);
     
-    let adviceHtml = `<div class="${riskAdvice.level.toLowerCase()}-risk">`;
+    let adviceHtml = `<div class="${riskAdvice.level.toLowerCase().replace(/\s+/g, '-')}-risk">`;
     adviceHtml += `<h3>${riskAdvice.level}</h3><ul>`;
     riskAdvice.advice.forEach(item => {
         adviceHtml += `<li>${item}</li>`;
