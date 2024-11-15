@@ -370,43 +370,50 @@ function getRiskAdvice(risk, data) {
     let adviceList = [];
     let riskLevel = '';
     
-    // 确定风险等级和基础建议
+    // 确定风险等级和获取相应的建议
     if (risk < 5) {
         riskLevel = t.lowRisk;
-        adviceList = Object.values(t.advice.lowRisk);
+        // 获取低风险建议
+        adviceList = [
+            t.advice.lowRisk.guidelines_notice,
+            t.advice.lowRisk.lifestyle,
+            data.bpTreat ? t.advice.lowRisk.bp_treated : t.advice.lowRisk.bp_untreated,
+            data.diabetes ? t.advice.lowRisk.diabetes : null,
+            t.advice.lowRisk.lipids
+        ];
     } else if (risk < 7.5) {
         riskLevel = t.moderateRisk;
-        adviceList = Object.values(t.advice.moderateRisk);
+        // 获取中等风险建议
+        adviceList = [
+            t.advice.moderateRisk.guidelines_notice,
+            t.advice.moderateRisk.lifestyle,
+            data.bpTreat ? t.advice.moderateRisk.bp_treated : t.advice.moderateRisk.bp_untreated,
+            data.diabetes ? t.advice.moderateRisk.diabetes : null,
+            t.advice.moderateRisk.lipids
+        ];
     } else {
         riskLevel = t.highRisk;
-        adviceList = Object.values(t.advice.highRisk);
+        // 获取高风险建议
+        adviceList = [
+            t.advice.highRisk.guidelines_notice,
+            t.advice.highRisk.lifestyle,
+            data.bpTreat ? t.advice.highRisk.bp_treated : t.advice.highRisk.bp_untreated,
+            data.diabetes ? t.advice.highRisk.diabetes : null,
+            t.advice.highRisk.lipids,
+            t.advice.highRisk.monitoring
+        ];
     }
 
-    // 根据患者具体情况筛选建议
-    let finalAdvice = adviceList.filter(advice => {
-        // 如果是高血压相关建议，根据是否服用降压药选择合适的建议
-        if (advice.includes('血压') || advice.includes('降压')) {
-            return data.bpTreat ? advice.includes('已在服用') : advice.includes('未服药');
-        }
-        // 如果是糖尿病相关建议，只在患者有糖尿病时显示
-        if (advice.includes('糖尿病')) {
-            return data.diabetes;
-        }
-        // 如果是吸烟相关建议，只在患者吸烟时显示
-        if (advice.includes('吸烟') || advice.includes('戒烟')) {
-            return data.smoker;
-        }
-        // 其他一般性建议都显示
-        return true;
-    });
+    // 过滤掉null值（未适用的建议）
+    adviceList = adviceList.filter(advice => advice !== null);
 
     return {
         level: riskLevel,
-        advice: finalAdvice
+        advice: adviceList
     };
 }
 
-// 修改 displayResult 函数，传入患者数据
+// 修改 displayResult 函数以更好地显示建议
 function displayResult(risk, data) {
     const resultDiv = document.getElementById('result');
     const riskScore = document.getElementById('riskScore');
@@ -419,14 +426,23 @@ function displayResult(risk, data) {
     
     let adviceHtml = `<div class="${riskAdvice.level.toLowerCase().replace(/\s+/g, '-')}-risk">`;
     adviceHtml += `<h3>${riskAdvice.level}</h3><ul>`;
+    
     riskAdvice.advice.forEach(item => {
-        const adviceItems = item.split('\n');
-        adviceItems.forEach(adviceItem => {
-            if (adviceItem.trim()) {
-                adviceHtml += `<li>${adviceItem.trim()}</li>`;
-            }
-        });
+        if (typeof item === 'string') {
+            const adviceItems = item.split('\n');
+            adviceItems.forEach(adviceItem => {
+                if (adviceItem.trim()) {
+                    // 处理指南提示的特殊格式
+                    if (adviceItem.startsWith('•')) {
+                        adviceHtml += `<li style="margin-left: 20px;">${adviceItem}</li>`;
+                    } else {
+                        adviceHtml += `<li>${adviceItem}</li>`;
+                    }
+                }
+            });
+        }
     });
+    
     adviceHtml += '</ul></div>';
     
     riskLevel.innerHTML = adviceHtml;
