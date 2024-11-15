@@ -69,7 +69,7 @@ const translations = {
         validRange: "有效范围",
         hints: {
             systolic: "请填写当前的收缩压数值，无论是否在服用降压药",
-            bpTreat: "如果目前正在服用降压药物，请选择"是""
+            bpTreat: "如果目前正在服用降压药物，请选择'是'"
         }
     }
 }; 
