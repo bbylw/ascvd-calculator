@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="zh">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PCE计算器 - ASCVD风险评估</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#2c3e50" />
+    <script src="lang.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <div class="language-switch">
+        <button
+          onclick="switchLanguage('zh')"
+          class="lang-btn active"
+          id="zh-btn"
+        >
+          中文
+        </button>
+        <button onclick="switchLanguage('en')" class="lang-btn" id="en-btn">
+          English
+        </button>
+      </div>
+      <h1>10年ASCVD风险评估计算器</h1>
+      <form id="pceForm">
+        <div class="form-group">
+          <label for="sex">性别:</label>
+          <select id="sex" required>
+            <option value="male">男</option>
+            <option value="female">女</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="race">种族:</label>
+          <select id="race" required>
+            <option value="asian">亚裔</option>
+            <option value="white">白人</option>
+            <option value="aa">非裔美国人</option>
+            <option value="other">其他</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="age">年龄:</label>
+          <input type="number" id="age" required />
+          <small class="unit-hint" id="ageHint"></small>
+        </div>
+
+        <div class="form-group">
+          <label for="totalChol">总胆固醇:</label>
+          <div class="input-unit-group">
+            <input type="number" id="totalChol" required step="0.01" min="0" />
+            <select
+              id="totalCholUnit"
+              onchange="handleUnitChange('totalChol', this.value)"
+            >
+              <option value="mgdl">mg/dL</option>
+              <option value="mmoll" selected>mmol/L</option>
+            </select>
+          </div>
+          <small class="unit-hint" id="totalCholHint"></small>
+        </div>
+
+        <div class="form-group">
+          <label for="hdl">高密度脂蛋白胆固醇 (HDL-C):</label>
+          <div class="input-unit-group">
+            <input type="number" id="hdl" required step="0.01" min="0" />
+            <select id="hdlUnit" onchange="handleUnitChange('hdl', this.value)">
+              <option value="mgdl">mg/dL</option>
+              <option value="mmoll" selected>mmol/L</option>
+            </select>
+          </div>
+          <small class="unit-hint" id="hdlHint"></small>
+        </div>
+
+        <div class="form-group">
+          <label for="systolic">收缩压 (mmHg):</label>
+          <input type="number" id="systolic" required />
+        </div>
+
+        <div class="form-group">
+          <label>高血压治疗:</label>
+          <input type="radio" id="bpTreatYes" name="bpTreat" value="yes" />
+          <label for="bpTreatYes">是</label>
+          <input
+            type="radio"
+            id="bpTreatNo"
+            name="bpTreat"
+            value="no"
+            checked
+          />
+          <label for="bpTreatNo">否</label>
+        </div>
+
+        <div class="form-group">
+          <label>糖尿病:</label>
+          <input type="radio" id="diabetesYes" name="diabetes" value="yes" />
+          <label for="diabetesYes">是</label>
+          <input
+            type="radio"
+            id="diabetesNo"
+            name="diabetes"
+            value="no"
+            checked
+          />
+          <label for="diabetesNo">否</label>
+        </div>
+
+        <div class="form-group">
+          <label>吸烟:</label>
+          <input type="radio" id="smokerYes" name="smoker" value="yes" />
+          <label for="smokerYes">是</label>
+          <input type="radio" id="smokerNo" name="smoker" value="no" checked />
+          <label for="smokerNo">否</label>
+        </div>
+
+        <button type="submit">计算风险</button>
+      </form>
+
+      <div id="result" class="hidden">
+        <h2>计算结果</h2>
+        <p>10年ASCVD风险: <span id="riskScore"></span>%</p>
+        <div id="riskLevel"></div>
+      </div>
+    </div>
+    <script src="script.js"></script>
+    <script>
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker
+            .register("/sw.js")
+            .then((registration) => {
+              console.log("ServiceWorker注册成功");
+            })
+            .catch((err) => {
+              console.log("ServiceWorker注册失败: ", err);
+            });
+        });
+      }
+    </script>
+  </body>
+</html>

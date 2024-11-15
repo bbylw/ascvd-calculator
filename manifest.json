@@ -1,0 +1,9 @@
+{
+    "name": "PCE风险评估计算器",
+    "short_name": "PCE计算器",
+    "description": "评估10年ASCVD风险的在线计算器",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#2c3e50"
+} 
