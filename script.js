@@ -370,63 +370,45 @@ function getRiskAdvice(risk) {
     if (risk < 5) {
         return {
             level: t.lowRisk,
-            advice: [
-                t.advice.lifestyle,
-                t.advice.checkup,
-                t.advice.diet,
-                t.advice.exercise
-            ]
+            advice: Object.values(t.advice.lowRisk)
         };
     } else if (risk < 7.5) {
         return {
             level: t.moderateRisk,
-            advice: [
-                t.advice.statin,
-                t.advice.exercise,
-                t.advice.diet,
-                t.advice.monitor
-            ]
+            advice: Object.values(t.advice.moderateRisk)
         };
     } else {
         return {
             level: t.highRisk,
-            advice: [
-                t.advice.doctor,
-                t.advice.intervention,
-                t.advice.medication,
-                t.advice.control,
-                t.advice.followup
-            ]
+            advice: Object.values(t.advice.highRisk)
         };
     }
 }
 
-// 修改 displayResult 函数
+// 修改 displayResult 函数以更好地显示建议
 function displayResult(risk) {
     const resultDiv = document.getElementById('result');
     const riskScore = document.getElementById('riskScore');
     const riskLevel = document.getElementById('riskLevel');
     
-    // 显示结果区域
     resultDiv.classList.remove('hidden');
-    
-    // 显示风险值
     riskScore.textContent = risk.toFixed(1);
     
-    // 获取风险建议
     const riskAdvice = getRiskAdvice(risk);
     
-    // 构建建议HTML
     let adviceHtml = `<div class="${riskAdvice.level.toLowerCase().replace(/\s+/g, '-')}-risk">`;
     adviceHtml += `<h3>${riskAdvice.level}</h3><ul>`;
     riskAdvice.advice.forEach(item => {
-        adviceHtml += `<li>${item}</li>`;
+        // 处理可能包含换行符的建议
+        const adviceItems = item.split('\n');
+        adviceItems.forEach(adviceItem => {
+            if (adviceItem.trim()) {
+                adviceHtml += `<li>${adviceItem.trim()}</li>`;
+            }
+        });
     });
     adviceHtml += '</ul></div>';
     
-    // 显示建议
     riskLevel.innerHTML = adviceHtml;
-    
-    // 滚动到结果区域
     resultDiv.scrollIntoView({ behavior: 'smooth' });
 } 
