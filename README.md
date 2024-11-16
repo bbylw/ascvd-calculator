@@ -46,6 +46,7 @@
 - 不适用于既往有ASCVD病史的患者
 - 计算结果仅供参考，具体诊疗请遵医嘱
 - 另外美国acc也提供这样的工具 https://tools.acc.org/ascvd-risk-estimator-plus/#!/calculate/estimate/
+- 中国的工具 https://www.cvdrisk.com.cn/ASCVD/Eval
 
 ## 免责声明
 医疗指南会定期更新，本工具提供的建议仅供参考。具体诊疗方案请遵医嘱，并关注相关权威医学指南的最新更新。
